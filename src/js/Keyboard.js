@@ -100,13 +100,15 @@ var Keyboard = {
 
   onKeyPress : function(e) {
     key = this.getCharFromKey(e);
+    //console.log(key);
     value = "";
 
     var specialkeys = {
       8 : "backspace",
-      13 : "enter"
+      13 : "enter",
+      173 : "-"
     };
-    
+
 
     if(this.shouldPreventDefault && (e.which < 112 || e.which > 123)) {
       e.preventDefault();
