@@ -6,7 +6,7 @@
 | |  | | |____   | |    | |__| | |__| | |__| |  / ____ \  / | |__| | |\  |  | |  | |__| | |__| | | \ \
 |_|  |_|______|  |_|    |_____/ \____/ \____/  /_/    \_\/   \____/|_| \_|  |_|   \____/ \____/|_|  \_\
 
-In webvorm! (In spreektaal ook wel 'HTML5' genoemd)
+In webvorm! (In de lokale tong ook wel 'HTML5' genoemd)
 */
 
 var Adventure = {
@@ -21,6 +21,12 @@ var Adventure = {
     this.age = 0;
     this.terminal = new Console(document.getElementById("console"));
     this.terminal.empty();
+
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+	  	 this.terminal.writeLine("Omdat het ik jouw toetsenbord niet kan openen moet\nje het helaas zonder dit fantastische avontuur doen.");
+	  	 return;
+   	}
+
     this.terminal.writeLinesOnDelay(0.1, [
       " _    _ ______ _______   _____       _  ____        __      ______  _   _ _______ _    _ _    _ _____",
       "| |  | |  ____|__   __| |  __ \\     | |/ __ \\      /\\ \\    / / __ \\| \\ | |__   __| |  | | |  | |  __ \\ ",
@@ -29,12 +35,19 @@ var Adventure = {
       "| |  | | |____   | |    | |__| | |__| | |__| |  / ____ \\  / | |__| | |\\  |  | |  | |__| | |__| | | \\ \\ ",
       "|_|  |_|______|  |_|    |_____/ \\____/ \\____/  /_/    \\_\\/   \\____/|_| \\_|  |_|   \\____/ \\____/|_|  \\_\\ "
     ], function() {
-      self.terminal.writeLinesOnDelay(1, [
-        "",
-        "Hallo speler, wat is jouw naam? "
-      ], function() {
-        self.askForName();
-      });
+      self.askNameQuestion();
+    });
+
+  },
+
+  askNameQuestion : function() {
+    var self = this;
+
+    self.terminal.writeLinesOnDelay(1, [
+      "",
+      "Hallo speler, wat is jouw naam? "
+    ], function() {
+      self.askForName();
     });
 
   },
@@ -43,13 +56,11 @@ var Adventure = {
     var self = this;
 
     this.terminal.createInputOnLastLine(function(name) {
-
       self.terminal.writeLine("Hallo, " + name);
       self.name = name;
       setTimeout(function() {
         self.askForAge();
       }, 1 * 1000);
-	  
     });
   },
 
@@ -58,28 +69,34 @@ var Adventure = {
 
     this.terminal.writeLine("Hoe oud ben je? ");
     this.terminal.createInputOnLastLine(function(age) {
-      if(age == parseInt(age)) {
-        if(age > 10 && age < 18) {
-          self.terminal.writeLine("Jij hebt de perfecte leeftijd voor DJO!");
-        } else if(age < 11) {
-          self.terminal.writeLine("Over " + (11 - parseInt(age)) + " jaar kan jij ook naar DJO!");
-        } else {
-          self.terminal.writeLinesOnDelay(1, [
-            "Misschien ken je een jonger persoon die djo leuk zou vinden.",
-            "Of je kan eens een kijkje nemen bij Bitlair!"
-          ], function() {
-            self.startGame();
-          });
-          return;
-        }
-        self.startGame();
-      } else {
-        self.terminal.writeLine("Voer je leeftijd aub in cijfers in.");
-        setTimeout(function() {
-          self.askForAge();
-        }, 1 * 1000);
-      }
+      self.handleAge(age);
     });
+  },
+
+  handleAge : function(age) {
+    var self = this;
+
+    if(age == parseInt(age)) {
+      if(age > 10 && age < 18) {
+        self.terminal.writeLine("Jij hebt de perfecte leeftijd voor DJO!");
+      } else if(age < 11) {
+        self.terminal.writeLine("Over " + (11 - parseInt(age)) + " jaar kan jij ook naar DJO!");
+      } else {
+        self.terminal.writeLinesOnDelay(1, [
+          "Misschien ken je een jonger persoon die djo leuk zou vinden.",
+          "Of je kan eens een kijkje nemen bij Bitlair!"
+        ], function() {
+          self.startGame();
+        });
+        return;
+      }
+      self.startGame();
+    } else {
+      self.terminal.writeLine("Voer je leeftijd aub in cijfers in.");
+      setTimeout(function() {
+        self.askForAge();
+      }, 1 * 1000);
+    }
   },
 
   startGame : function() {
@@ -109,6 +126,8 @@ var Adventure = {
         self.storyLineYoeriStart();
       } else if(lookingAt.match(/eten/i)) {
         self.storyLineEtenStart();
+      } else if(lookingAt.match(/keiharde porno/i)) {
+        self.storyLinePornoStart();
       } else {
         self.terminal.writeLine("Dat is geen optie!");
         self.startFirstStoryLine();
@@ -203,6 +222,18 @@ var Adventure = {
         self.storyLineEtenQuestionTwo();
       }
     });
+  },
+
+  /*
+  Storyline Keiharde Porno
+  */
+  storyLinePornoStart : function() {
+    var self = this;
+
+    this.terminal.writeLine("Misschien moet je eerst naar een computer kijken voordat je dat doet.");
+    setTimeout(function() {
+      self.startFirstStoryLine();
+    }, 1 * 1000);
   },
 
   gameOver : function() {
